@@ -24,5 +24,9 @@ class ProductionDepartmentSeeder extends Seeder
         ProductionDepartment::create([
             'nama_bagian' => 'UV'
         ]);
+
+        ProductionDepartment::create([
+            'nama_bagian' => 'Finishing'
+        ]);
     }
 }

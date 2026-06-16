@@ -4,7 +4,6 @@
 
 <head>
 
-```
 <meta charset="UTF-8">
 
 <meta name="viewport"
@@ -21,8 +20,10 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
       rel="stylesheet">
 
-<style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+<style>
+        
     body{
         margin:0;
         background:#f7fbff;
@@ -124,8 +125,7 @@
     }
 
     .page-content{
-
-        padding:30px;
+        padding:20px 30px;
     }
 
     .card-modern{
@@ -171,8 +171,17 @@
         background:white;
     }
 
+    th a{
+        text-decoration:none;
+        color:#333;
+        font-weight:600;
+    }
+
+    th a:hover{
+        color:#e91e63;
+    }
+
 </style>
-```
 
 </head>
 
@@ -180,7 +189,6 @@
 
 <div class="sidebar">
 
-```
 <div class="sidebar-header">
 
     <h2>PROTRACK</h2>
@@ -219,48 +227,6 @@
 
     <hr class="text-white">
 
-    <a href="/develop">
-
-        <i class="bi bi-gear"></i>
-
-        Develop
-
-    </a>
-
-    <a href="/offset">
-
-        <i class="bi bi-printer"></i>
-
-        Offset
-
-    </a>
-
-    <a href="/plotter">
-
-        <i class="bi bi-bounding-box"></i>
-
-        Plotter
-
-    </a>
-
-    <a href="/uv">
-
-        <i class="bi bi-droplet"></i>
-
-        UV
-
-    </a>
-
-    <a href="/finishing">
-
-        <i class="bi bi-check2-square"></i>
-
-        Finishing
-
-    </a>
-
-    <hr class="text-white">
-
     <a href="#"
        onclick="
        event.preventDefault();
@@ -283,58 +249,32 @@
     </form>
 
 </div>
-```
 
 </div>
 
 <div class="main-content">
 
-```
-<div class="topbar">
+    <div class="page-content">
 
-    <h5 class="mb-0">
+        @if(session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
 
-        Sistem Monitoring Produksi
+        @if(session('error'))
+            <div class="alert alert-danger">
+                {{ session('error') }}
+            </div>
+        @endif
 
-    </h5>
-
-    <div>
-
-        {{ Auth::user()->name }}
+        @yield('content')
 
     </div>
 
 </div>
 
-<div class="page-content">
-
-    @if(session('success'))
-
-        <div class="alert alert-success">
-
-            {{ session('success') }}
-
-        </div>
-
-    @endif
-
-    @if(session('error'))
-
-        <div class="alert alert-danger">
-
-            {{ session('error') }}
-
-        </div>
-
-    @endif
-
-    @yield('content')
-
-</div>
-```
-
-</div>
-
+    @stack('scripts')
 </body>
 
 </html>

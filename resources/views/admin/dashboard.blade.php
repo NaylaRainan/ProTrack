@@ -2,406 +2,377 @@
 
 @section('content')
 
-<div class="container">
+<div class="container-fluid">
 
-    <h2>Dashboard Admin</h2>
+<div class="mb-4">
 
-    <hr>
+    <h2 class="fw-bold">
+        Dashboard Admin
+    </h2>
 
-    <div class="row">
+    <p class="text-muted">
+        Ringkasan monitoring produksi
+    </p>
 
-        <div class="col-md-3 mb-3">
-            <div class="card">
+</div>
+
+<div class="row">
+
+    <div class="col-md-4 mb-3">
+
+        <a href="/spk" class="text-decoration-none">
+
+            <div class="card card-modern">
+
                 <div class="card-body text-center">
-                    <h5>Total SPK</h5>
-                    <h2>{{ $totalSpk }}</h2>
-                </div>
-            </div>
-        </div>
 
-        <div class="col-md-3 mb-3">
-            <div class="card">
-                <div class="card-body text-center">
-                    <h5>Belum Diproses</h5>
-                    <h2>{{ $belumDiproses }}</h2>
-                </div>
-            </div>
-        </div>
+                    <h6>Total SPK</h6>
 
-        <div class="col-md-3 mb-3">
-            <div class="card">
-                <div class="card-body text-center">
-                    <h5>Sedang Diproses</h5>
-                    <h2>{{ $sedangDiproses }}</h2>
-                </div>
-            </div>
-        </div>
+                    <h2 class="fw-bold">
+                        {{ $totalSpk }}
+                    </h2>
 
-        <div class="col-md-3 mb-3">
-            <div class="card">
-                <div class="card-body text-center">
-                    <h5>Selesai</h5>
-                    <h2>{{ $selesai }}</h2>
                 </div>
+
             </div>
-        </div>
+        </a>
 
     </div>
 
-    <div class="row">
+    <div class="col-md-4 mb-3">
 
-        <div class="col-md-4 mb-3">
-            <div class="card">
+        <a href="/spk?status=belum_diproses" class="text-decoration-none">
+            <div class="card card-modern">
+
                 <div class="card-body text-center">
-                    <h5>Menunggu Finishing</h5>
-                    <h2>{{ $menungguFinishing }}</h2>
-                </div>
-            </div>
-        </div>
 
-        <div class="col-md-4 mb-3">
-            <div class="card">
-                <div class="card-body text-center">
-                    <h5>Sedang Finishing</h5>
-                    <h2>{{ $sedangFinishing }}</h2>
-                </div>
-            </div>
-        </div>
+                    <h6>Belum Diproses</h6>
 
-        <div class="col-md-4 mb-3">
-            <div class="card">
-                <div class="card-body text-center">
-                    <h5>Terlambat</h5>
-                    <h2>{{ $terlambat }}</h2>
-                </div>
-            </div>
-        </div>
+                    <h2 class="text-secondary fw-bold">
+                        {{ $belumDiproses }}
+                    </h2>
 
+                </div>
+
+            </div>
+        </a>
     </div>
 
-    <hr>
+    <div class="col-md-4 mb-3">
 
-    @if($deadlineBesok > 0)
-
-    <div class="alert alert-warning">
-
-        Ada
-
-        <strong>
-            {{ $deadlineBesok }}
-        </strong>
-
-        SPK yang deadline-nya besok.
-
-    </div>
-
-    @endif
-
-    @if($spkTerlambat > 0)
-
-    <div class="alert alert-danger">
-
-        Ada
-
-        <strong>
-            {{ $spkTerlambat }}
-        </strong>
-
-        SPK yang melewati deadline.
-
-    </div>
-
-    @endif
-    <hr>
-
-    <h4>Deadline Mendekati Jatuh Tempo</h4>
-
-    <table class="table table-bordered">
-
-        <thead>
-            <tr>
-                <th>No SPK</th>
-                <th>Customer</th>
-                <th>Deadline</th>
-            </tr>
-        </thead>
-
-        <tbody>
-
-        @forelse($deadlineSoon as $spk)
-
-            <tr>
-
-                <td>
-                    {{ $spk->no_spk }}
-                </td>
-
-                <td>
-                    {{ $spk->customer->nama_customer }}
-                </td>
-
-                <td>
-                    {{ $spk->deadline_date }}
-                </td>
-
-            </tr>
-
-        @empty
-
-            <tr>
-                <td colspan="3" class="text-center">
-                    Tidak ada deadline yang mendekati
-                </td>
-            </tr>
-
-        @endforelse
-
-        </tbody>
-
-    </table>
-
-    <hr>
-
-    <h4>Prioritas Pekerjaan</h4>
-
-    <div class="row">
-
-        <div class="col-md-4 mb-3">
-
-            <div class="card border-danger">
+        <a href="/spk?status=sedang_diproses" class="text-decoration-none">
+            
+            <div class="card card-modern">
 
                 <div class="card-body text-center">
 
-                    <h5>URGENT</h5>
+                    <h6>Sedang Diproses</h6>
 
-                    <h2>
-                        {{ $urgent }}
+                    <h2 class="text-primary fw-bold">
+                        {{ $sedangDiproses }}
                     </h2>
 
                 </div>
 
             </div>
 
-        </div>
-
-        <div class="col-md-4 mb-3">
-
-            <div class="card border-warning">
-
-                <div class="card-body text-center">
-
-                    <h5>HIGH</h5>
-
-                    <h2>
-                        {{ $high }}
-                    </h2>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="col-md-4 mb-3">
-
-            <div class="card border-secondary">
-
-                <div class="card-body text-center">
-
-                    <h5>NORMAL</h5>
-
-                    <h2>
-                        {{ $normal }}
-                    </h2>
-
-                </div>
-
-            </div>
-
-        </div>
+        </a>
 
     </div>
 
-    <hr>
+<div class="row">
 
-    <h4>SPK Urgent Belum Selesai</h4>
+    <div class="col-md-4 mb-3">
 
-    <table class="table table-bordered">
+        <a href="/spk?status=menunggu_finishing" class="text-decoration-none">
 
-        <thead>
+            <div class="card card-modern">
 
-            <tr>
-                <th>No SPK</th>
-                <th>Customer</th>
-                <th>Departemen</th>
-                <th>Status</th>
-            </tr>
+                <div class="card-body text-center">
 
-        </thead>
+                    <h6>Menunggu Finishing</h6>
 
-        <tbody>
-
-        @forelse($urgentSpks as $spk)
-
-            <tr>
-
-                <td>{{ $spk->no_spk }}</td>
-
-                <td>{{ $spk->customer->nama_customer }}</td>
-
-                <td>{{ $spk->department->nama_bagian }}</td>
-
-                <td>{{ $spk->status }}</td>
-
-            </tr>
-
-        @empty
-
-            <tr>
-
-                <td colspan="4" class="text-center">
-
-                    Tidak ada SPK urgent
-
-                </td>
-
-            </tr>
-
-        @endforelse
-
-        </tbody>
-
-    </table>
-
-    <hr>
-
-    <h4>Grafik Status SPK</h4>
-
-    <canvas id="statusChart"></canvas>
-
-    <hr>
-
-    <h4>Grafik SPK per Departemen</h4>
-
-    <canvas id="departmentChart"></canvas>
-
-    <h4>SPK Terbaru</h4>
-
-    <table class="table table-bordered">
-
-        <th>Progress</th>
-        @php
-
-        $progress = match($spk->status) {
-
-            'belum_diproses' => 0,
-
-            'sedang_diproses' => 50,
-
-            'menunggu_finishing' => 75,
-
-            'sedang_finishing' => 90,
-
-            'selesai' => 100,
-
-            default => 0
-
-        };
-
-        @endphp
-
-        <td>
-
-            <div class="progress">
-
-                <div
-                    class="progress-bar"
-                    style="width: {{ $progress }}%;"
-                >
-
-                    {{ $progress }}%
+                    <h2 class="text-warning fw-bold">
+                        {{ $menungguFinishing }}
+                    </h2>
 
                 </div>
 
             </div>
 
-        </td>
+        </a>    
 
-        <div class="alert alert-danger">
+    </div>
 
-            <strong>
-                SPK Terlambat Prioritas Urgent :
-            </strong>
+    <div class="col-md-4 mb-3">
 
-            {{ $terlambatUrgent }}
+        <a href="/spk?status=sedang_finishing" class="text-decoration-none">
 
-        </div>
+            <div class="card card-modern">
 
-        <thead>
-            <tr>
-                <th>No SPK</th>
-                <th>Customer</th>
-                <th>Departemen</th>
-                <th>Status</th>
-            </tr>
-        </thead>
+                <div class="card-body text-center">
 
-        <tbody>
+                    <h6>Sedang Finishing</h6>
 
-        @forelse($latestSpks as $spk)
+                    <h2 class="text-info fw-bold">
+                        {{ $sedangFinishing }}
+                    </h2>
 
-            <tr>
-                <td>{{ $spk->no_spk }}</td>
-                <td>{{ $spk->customer->nama_customer }}</td>
-                <td>{{ $spk->department->nama_bagian }}</td>
-                <td>{{ $spk->status }}</td>
-            </tr>
+                </div>
 
-        @empty
+            </div>
 
-            <tr>
-                <td colspan="4" class="text-center">
-                    Belum ada data SPK
-                </td>
-            </tr>
+        </a>
 
-        @endforelse
+    </div>
 
-        </tbody>
-    </table> 
     
-    <hr>
+    <div class="col-md-4 mb-3">
 
-    <h4>SPK per Departemen</h4>
+        <a href="/spk?status=selesai" class="text-decoration-none">
 
-    <table class="table table-bordered">
+            <div class="card card-modern">
 
-        <tr>
-            <th>Develop</th>
-            <td>{{ $develop }}</td>
-        </tr>
+                <div class="card-body text-center">
 
-        <tr>
-            <th>Offset</th>
-            <td>{{ $offset }}</td>
-        </tr>
+                    <h6>Selesai</h6>
 
-        <tr>
-            <th>Plotter</th>
-            <td>{{ $plotter }}</td>
-        </tr>
+                    <h2 class="text-success fw-bold">
+                        {{ $selesai }}
+                    </h2>
 
-        <tr>
-            <th>UV</th>
-            <td>{{ $uv }}</td>
-        </tr>
+                </div>
 
-        <tr>
-            <th>Finishing</th>
-            <td>{{ $finishing }}</td>
-        </tr>
+            </div>
+        </a>    
 
-    </table>    
+    </div>
+
+</div>
+
+<div class="row mb-4">
+
+    <div class="col-md-4">
+
+        <a href="/spk?status=terlambat" class="text-decoration-none text-dark">
+
+            <div class="card-modern p-4">
+
+                <div class="card-body text-center">
+
+                    <h5>🚨 Terlambat</h5>
+
+                    <h1 class="text-danger">
+                        {{ $spkTerlambat }}
+                    </h1>
+
+                </div>
+
+            </div>
+
+        </a>
+
+    </div>
+
+    <div class="col-md-4">
+
+        <a href="/spk?status=deadline_besok" class="text-decoration-none text-dark">
+
+            <div class="card-modern p-4">
+
+                <div class="card-body text-center">
+
+                    <h5>⚠ Deadline Besok</h5>
+
+                    <h1 class="text-warning">
+                        {{ $deadlineBesok }}
+                    </h1>
+
+                </div>
+
+            </div>
+
+        </a>
+
+    </div>
+
+    <div class="col-md-4">
+
+        <a href="/spk?priority=urgent" class="text-decoration-none text-dark">
+
+            <div class="card-modern p-4">
+
+                <div class="card-body text-center">
+
+                    <h5>🔥 Urgent</h5>
+
+                    <h1 class="text-danger">
+                        {{ $urgent }}
+                    </h1>
+
+                </div>
+
+            </div>
+
+        </a>
+
+    </div>
+
+</div>
+
+@if($deadlineBesok > 0)
+
+<div class="alert alert-warning">
+
+    Ada
+
+    <strong>
+        {{ $deadlineBesok }}
+    </strong>
+
+    SPK yang deadline besok.
+
+</div>
+
+@endif
+
+@if($spkTerlambat > 0)
+
+<div class="alert alert-danger">
+
+    Ada
+
+    <strong>
+        {{ $spkTerlambat }}
+    </strong>
+
+    SPK yang melewati deadline.
+
+</div>
+
+@endif
+
+<div class="row mb-4">
+
+    <div class="col-md-6">
+
+        <div class="card-modern p-4">
+
+            <h5>Status Produksi</h5>
+
+            <canvas id="statusChart"></canvas>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-3">
+
+    <div class="card-modern p-3">
+
+        <h5>Distribusi Departemen</h5>
+
+        <canvas id="departmentChart"></canvas>
+
+    </div>
+
+</div>
+
+
+
+</div>
+
+<div class="card card-modern mt-4">
+
+    <div class="card-body">
+
+        <h5>
+            SPK Terbaru
+        </h5>
+
+        <table class="table table-hover">
+
+            <thead>
+
+                <tr>
+
+                    <th>No SPK</th>
+
+                    <th>Customer</th>
+
+                    <th>Departemen</th>
+
+                    <th>Status</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+            @forelse($latestSpks as $spk)
+
+                <tr>
+
+                    <td>
+                        {{ $spk->no_spk }}
+                    </td>
+
+                    <td>
+                        {{ $spk->customer->nama_customer }}
+                    </td>
+
+                    <td>
+                        {{ $spk->department->nama_bagian }}
+                    </td>
+
+                    <td>
+
+                        @if($spk->status == 'selesai')
+
+                            <span class="badge bg-success">
+                                Selesai
+                            </span>
+
+                        @elseif($spk->status == 'terlambat')
+
+                            <span class="badge bg-danger">
+                                Terlambat
+                            </span>
+
+                        @else
+
+                            <span class="badge bg-primary">
+                                {{ $spk->status }}
+                            </span>
+
+                        @endif
+
+                    </td>
+
+                </tr>
+
+            @empty
+
+                <tr>
+
+                    <td colspan="4" class="text-center">
+
+                        Belum ada data
+
+                    </td>
+
+                </tr>
+
+            @endforelse
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
 
 </div>
 
@@ -413,31 +384,24 @@ new Chart(
     document.getElementById('statusChart'),
     {
 
-        type: 'bar',
+        type:'bar',
 
-        data: {
+        data:{
 
-            labels: [
-
+            labels:[
                 'Belum Diproses',
-
                 'Sedang Diproses',
-
                 'Menunggu Finishing',
-
                 'Sedang Finishing',
-
                 'Selesai',
-
                 'Terlambat'
-
             ],
 
-            datasets: [{
+            datasets:[{
 
-                label: 'Jumlah SPK',
+                label:'Jumlah SPK',
 
-                data: @json($statusChart)
+                data:@json($statusChart)
 
             }]
 
@@ -450,27 +414,21 @@ new Chart(
     document.getElementById('departmentChart'),
     {
 
-        type: 'pie',
+        type:'pie',
 
-        data: {
+        data:{
 
-            labels: [
-
+            labels:[
                 'Develop',
-
                 'Offset',
-
                 'Plotter',
-
                 'UV',
-
                 'Finishing'
-
             ],
 
-            datasets: [{
+            datasets:[{
 
-                data: @json($departmentChart)
+                data:@json($departmentChart)
 
             }]
 

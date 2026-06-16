@@ -17,12 +17,36 @@ class HomeController extends Controller
     }
 
     /**
-     * Show the application dashboard.
+     * Redirect berdasarkan role
      *
-     * @return \Illuminate\Contracts\Support\Renderable
+     * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        return view('home');
+        $role = auth()->user()->role;
+
+        switch ($role) {
+
+            case 'admin':
+                return redirect('/admin');
+
+            case 'develop':
+                return redirect('/develop');
+
+            case 'offset':
+                return redirect('/offset');
+
+            case 'plotter':
+                return redirect('/plotter');
+
+            case 'uv':
+                return redirect('/uv');
+
+            case 'finishing':
+                return redirect('/finishing');
+
+            default:
+                return redirect('/');
+        }
     }
 }

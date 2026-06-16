@@ -1,12 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+
 use App\Models\Customer;
 use App\Models\Spk;
 use App\Models\SpkDetail;
 use App\Models\ProductionDepartment;
-
-use Illuminate\Http\Request;
 
 class ImportController extends Controller
 {
@@ -18,81 +19,140 @@ class ImportController extends Controller
     public function import(Request $request)
     {
         $request->validate([
-            'xml_file' => 'required'
+            'xml_file' => 'required|file'
         ]);
 
-        $xmlFile = $request->file('xml_file');
+        try {
 
-        $xml = simplexml_load_file($xmlFile);
+            $xmlFile = $request->file('xml_file');
 
-        $deliveryOrder = $xml->TRANSACTIONS->DELIVERYORDER;
-
-        $noSpk = (string) $deliveryOrder->INVOICENO;
-
-        if (Spk::where('no_spk', $noSpk)->exists()) {
-            return back()->with(
-                'error',
-                'SPK sudah pernah diimport'
+            $xml = simplexml_load_file(
+                $xmlFile->getRealPath()
             );
-        }
 
-        $customerName = trim(
-            (string) $deliveryOrder->SHIPTO1
-        );
+            $deliveryOrder =
+                $xml->TRANSACTIONS->DELIVERYORDER;
 
-        $customer = Customer::firstOrCreate([
-            'nama_customer' => $customerName
-        ]);
+            $noSpk =
+                (string) $deliveryOrder->INVOICENO;
 
-        $description = strtoupper(
-            (string) $deliveryOrder->DESCRIPTION
-        );
+            if (
+                Spk::where(
+                    'no_spk',
+                    $noSpk
+                )->exists()
+            ) {
+                return back()->with(
+                    'error',
+                    'SPK sudah pernah diimport'
+                );
+            }
 
-        if (str_contains($description, 'DEVELOP')) {
-            $departmentName = 'Develop';
-        } elseif (str_contains($description, 'OFFSET')) {
-            $departmentName = 'Offset';
-        } elseif (str_contains($description, 'PLOTTER')) {
-            $departmentName = 'Plotter';
-        } elseif (str_contains($description, 'UV')) {
-            $departmentName = 'UV';
-        } else {
-            return back()->with(
-                'error',
-                'Departemen tidak ditemukan'
+            $customerName = trim(
+                (string)
+                $deliveryOrder->SHIPTO1
             );
-        }
 
-        $department = ProductionDepartment::where(
-            'nama_bagian',
-            $departmentName
-        )->first();
-
-        $spk = Spk::create([
-            'customer_id' => $customer->id,
-            'production_department_id' => $department->id,
-            'no_spk' => $noSpk,
-            'tanggal_spk' => (string) $deliveryOrder->INVOICEDATE,
-            'status' => 'belum_diproses',
-            'keterangan' => (string) $deliveryOrder->DESCRIPTION
-        ]);
-
-        foreach ($deliveryOrder->ITEMLINE as $item) {
-
-            SpkDetail::create([
-                'spk_id' => $spk->id,
-                'nama_file' => (string) $item->ITEMRESERVED1,
-                'bahan' => (string) $item->ITEMOVDESC,
-                'panjang' => (float) $item->ITEMRESERVED2,
-                'lebar' => (float) $item->ITEMRESERVED3,
-                'qty' => (int) $item->QUANTITY,
-                'finishing' => (string) $item->ITEMRESERVED6
+            $customer = Customer::firstOrCreate([
+                'nama_customer' => $customerName
             ]);
-        }
 
-        return back()->with(
-            'success',
-            'Import XML berhasil'
-        );
+            $description = strtoupper(
+                (string)
+                $deliveryOrder->DESCRIPTION
+            );
+
+            if (
+                str_contains(
+                    $description,
+                    'DEVELOP'
+                )
+            ) {
+                $departmentName = 'Develop';
+
+            } elseif (
+                str_contains(
+                    $description,
+                    'OFFSET'
+                )
+            ) {
+                $departmentName = 'Offset';
+
+            } elseif (
+                str_contains(
+                    $description,
+                    'PLOTTER'
+                )
+            ) {
+                $departmentName = 'Plotter';
+
+            } elseif (
+                str_contains(
+                    $description,
+                    'UV'
+                )
+            ) {
+                $departmentName = 'UV';
+
+            } else {
+
+                return back()->with(
+                    'error',
+                    'Departemen tidak ditemukan'
+                );
+            }
+
+            $department =
+                ProductionDepartment::where(
+                    'nama_bagian',
+                    $departmentName
+                )->first();
+
+            if (!$department) {
+                return back()->with(
+                    'error',
+                    'Master departemen belum tersedia'
+                );
+            }
+
+            $spk = Spk::create([
+                'customer_id' => $customer->id,
+                'production_department_id' => $department->id,
+                'no_spk' => $noSpk,
+                'tanggal_spk' => date('Y-m-d'),
+                'status' => 'belum_diproses',
+                'priority' => 'normal',
+                'keterangan' => (string) $deliveryOrder->DESCRIPTION
+            ]);
+
+            foreach (
+                $deliveryOrder->ITEMLINE
+                as $item
+            ) {
+
+                SpkDetail::create([
+                    'spk_id' => $spk->id,
+                    'nama_file' => (string) $item->ITEMRESERVED1,
+                    'bahan' => (string) $item->ITEMOVDESC,
+                    'panjang' => (float) $item->ITEMRESERVED2,
+                    'lebar' => (float) $item->ITEMRESERVED3,
+                    'qty' => (int) $item->QUANTITY,
+                    'finishing' => (string) $item->ITEMRESERVED6
+                ]);
+            }
+
+            return back()->with(
+                'success',
+                'Import XML berhasil'
+            );
+
+        } catch (\Exception $e) {
+
+            return back()->with(
+                'error',
+                'XML gagal diproses : '
+                . $e->getMessage()
+            );
+        }
     }
 }

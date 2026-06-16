@@ -11,13 +11,27 @@ class RoleMiddleware
      * Handle an incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
-     * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
+     * @param  \Closure  $next
+     * @param  string  $role
+     * @return mixed
      */
-    public function handle($request, Closure $next, $role)
+    public function handle(Request $request, Closure $next, $role)
     {
-        if (auth()->user()->role != $role) {
-            abort(403);
+        // Jika belum login
+        if (!auth()->check()) {
+
+            return redirect('/login');
+
+        }
+
+        // Jika role tidak sesuai
+        if (auth()->user()->role !== $role) {
+
+            abort(
+                403,
+                'FORBIDDEN ACCESS'
+            );
+
         }
 
         return $next($request);

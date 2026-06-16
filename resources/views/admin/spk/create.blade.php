@@ -1,279 +1,314 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('content')
 
-<div class="container">
+<div class="container-fluid">
 
-    <h2>Tambah SPK</h2>
+<div class="d-flex justify-content-between align-items-center mb-4">
 
-    <form action="/spk/store" method="POST">
+    <div>
 
-        @csrf
+        <h2 class="fw-bold">
+            Tambah SPK
+        </h2>
 
-        <input
-            type="text"
-            class="form-control"
-            value="SPK/26/06/0001"
-            readonly
-        >
+        <p class="text-muted mb-0">
+            Buat Surat Perintah Kerja baru
+        </p>
 
-        <div class="mb-3">
+    </div>
 
-            <label>Customer</label>
+</div>
 
-            <select
-                name="customer_id"
-                class="form-control"
-            >
+<form action="/spk/store" method="POST">
 
-                @foreach($customers as $customer)
+    @csrf
 
-                    <option
-                        value="{{ $customer->id }}"
-                    >
-                        {{ $customer->nama_customer }}
-                    </option>
+    <div class="card card-modern mb-4">
 
-                @endforeach
+        <div class="card-body">
 
-            </select>
+            <h5 class="mb-3">
+                Informasi SPK
+            </h5>
 
-        </div>
+            <div class="row">
 
-        <div class="mb-3">
+                <div class="col-md-4 mb-3">
 
-            <label>Departemen</label>
+                    <label class="form-label">
 
-            <select
-                name="production_department_id"
-                class="form-control"
-            >
+                        Nomor SPK
 
-                @foreach($departments as $department)
+                    </label>
 
-                    <option
-                        value="{{ $department->id }}"
-                    >
-                        {{ $department->nama_bagian }}
-                    </option>
+                    <input
+                        type="text"
+                        class="form-control"
+                        value="Otomatis dibuat sistem"
+                        readonly>
 
-                @endforeach
+                </div>
 
-            </select>
+                <div class="col-md-4 mb-3">
 
-        </div>
+                    <label class="form-label">
 
-        <div class="mb-3">
+                        Customer
 
-            <label>Tanggal SPK</label>
+                    </label>
 
-            <input
-                type="date"
-                name="tanggal_spk"
-                class="form-control"
-                value="{{ date('Y-m-d') }}"
-            >
+                    <select
+                        name="customer_id"
+                        class="form-control"
+                        required>
 
-        </div>
+                        @foreach($customers as $customer)
 
-        <div class="mb-3">
+                            <option
+                                value="{{ $customer->id }}">
 
-            <label>Deadline</label>
+                                {{ $customer->nama_customer }}
 
-            <input
-                type="date"
-                name="deadline_date"
-                class="form-control"
-            >
+                            </option>
 
-        </div>
+                        @endforeach
 
-        <div class="mb-3">
+                    </select>
 
-            <label>Priority</label>
+                </div>
 
-            <select
-                name="priority"
-                class="form-control"
-            >
+                <div class="col-md-4 mb-3">
 
-                <option value="normal">
-                    Normal
-                </option>
+                    <label class="form-label">
 
-                <option value="high">
-                    High
-                </option>
+                        Departemen
 
-                <option value="urgent">
-                    Urgent
-                </option>
+                    </label>
 
-            </select>
+                    <select
+                        name="production_department_id"
+                        class="form-control"
+                        required>
 
-        </div>
+                        @foreach($departments as $department)
 
-        <div class="mb-3">
+                            <option
+                                value="{{ $department->id }}">
 
-            <label>Keterangan</label>
+                                {{ $department->nama_bagian }}
 
-            <textarea
-                name="keterangan"
-                class="form-control"
-                rows="3"
-            ></textarea>
+                            </option>
 
-        </div>
+                        @endforeach
 
-        <hr>
+                    </select>
 
-        <h4>Detail Pekerjaan</h4>
-
-        <div class="mb-3">
-
-            <label>Nama File</label>
-
-            <input
-                type="text"
-                name="nama_file"
-                class="form-control"
-            >
-
-        </div>
-
-        <div class="mb-3">
-
-            <label>Bahan</label>
-
-            <input
-                type="text"
-                name="bahan"
-                class="form-control"
-            >
-
-        </div>
-
-        <div class="row">
-
-            <div class="col-md-3">
-
-                <label>Panjang</label>
-
-                <input
-                    type="number"
-                    name="panjang"
-                    class="form-control"
-                >
+                </div>
 
             </div>
 
-            <div class="col-md-3">
+            <div class="row">
 
-                <label>Lebar</label>
+                <div class="col-md-4 mb-3">
 
-                <input
-                    type="number"
-                    name="lebar"
-                    class="form-control"
-                >
+                    <label class="form-label">
+
+                        Tanggal SPK
+
+                    </label>
+
+                    <input
+                        type="date"
+                        name="tanggal_spk"
+                        value="{{ date('Y-m-d') }}"
+                        class="form-control">
+
+                </div>
+
+                <div class="col-md-4 mb-3">
+
+                    <label class="form-label">
+
+                        Deadline
+
+                    </label>
+
+                    <input
+                        type="date"
+                        name="deadline_date"
+                        min="{{ date('Y-m-d') }}"
+                        class="form-control">
+
+                </div>
+
+                <div class="col-md-4 mb-3">
+
+                    <label class="form-label">
+
+                        Prioritas
+
+                    </label>
+
+                    <select
+                        name="priority"
+                        class="form-control">
+
+                        <option value="normal">
+
+                            Normal
+
+                        </option>
+
+                        <option value="high">
+
+                            High
+
+                        </option>
+
+                        <option value="urgent">
+
+                            Urgent
+
+                        </option>
+
+                    </select>
+
+                </div>
 
             </div>
 
-            <div class="col-md-3">
+            <div class="mb-3">
 
-                <label>Qty</label>
+                <label class="form-label">
 
-                <input
-                    type="number"
-                    name="qty"
-                    class="form-control"
-                >
+                    Keterangan
 
-            </div>
+                </label>
 
-            <div class="col-md-3">
-
-                <label>Finishing</label>
-
-                <input
-                    type="text"
-                    name="finishing"
-                    class="form-control"
-                >
-
-            </div>
-
-        <hr>
-
-        <h4>Detail Item Produksi</h4>
-
-        <div id="detail-container">
-
-            <div class="detail-item border p-3 mb-2">
-
-                <input
-                    type="text"
-                    name="nama_file[]"
-                    class="form-control mb-2"
-                    placeholder="Nama File"
-                >
-
-                <input
-                    type="text"
-                    name="bahan[]"
-                    class="form-control mb-2"
-                    placeholder="Bahan"
-                >
-
-                <input
-                    type="number"
-                    name="panjang[]"
-                    class="form-control mb-2"
-                    placeholder="Panjang"
-                >
-
-                <input
-                    type="number"
-                    name="lebar[]"
-                    class="form-control mb-2"
-                    placeholder="Lebar"
-                >
-
-                <input
-                    type="number"
-                    name="qty[]"
-                    class="form-control mb-2"
-                    placeholder="Qty"
-                >
-
-                <input
-                    type="text"
-                    name="finishing[]"
-                    class="form-control mb-2"
-                    placeholder="Finishing"
-                >
+                <textarea
+                    name="keterangan"
+                    rows="3"
+                    class="form-control"></textarea>
 
             </div>
 
         </div>
 
-        <button
-            type="button"
-            class="btn btn-info mb-3"
-            onclick="tambahDetail()"
-        >
-            + Tambah Item
-        </button>
+    </div>
+
+    <div class="card card-modern">
+
+        <div class="card-body">
+
+            <div class="d-flex justify-content-between mb-3">
+
+                <h5>
+                    Detail Item Produksi
+                </h5>
+
+                <button
+                    type="button"
+                    class="btn btn-pink"
+                    onclick="tambahDetail()">
+
+                    + Tambah Item
+
+                </button>
+
+            </div>
+
+            <div id="detail-container">
+
+                <div class="detail-item border rounded p-3 mb-3">
+
+                    <div class="row">
+
+                        <div class="col-md-3">  
+                            <label class="form-label">Nama File</label>
+                            <input
+                                type="text"
+                                name="nama_file[]"
+                                class="form-control">
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label">Bahan</label>
+                            <input
+                                type="text"
+                                name="bahan[]"
+                                class="form-control">
+                        </div>
+
+                        <div class="col-md-2">
+                            <label class="form-label">Finishing</label>
+                            <input
+                                type="text"
+                                name="finishing[]"
+                                class="form-control">
+                        </div>
+
+                        <div class="col-md-1">
+                            <label class="form-label">Panjang</label>
+                            <input
+                                type="number"
+                                step="0.01"
+                                min="0"
+                                name="panjang[]"
+                                class="form-control">
+                        </div>
+
+                        <div class="col-md-1">
+                            <label class="form-label">Lebar</label>
+                            <input
+                                type="number"
+                                step="0.01"
+                                min="0"
+                                name="lebar[]"
+                                class="form-control">
+                        </div>
+
+                        <div class="col-md-1">
+                            <label class="form-label">Qty</label>
+                            <input
+                                type="number"
+                                name="qty[]"
+                                min="1"
+                                value="1"
+                                class="form-control">
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
 
         </div>
+
+    </div>
+
+    <div class="mt-4">
+
         <button
             type="submit"
-            class="btn btn-primary"
-        >
-            Simpan
+            class="btn btn-primary">
+
+            Simpan SPK
+
         </button>
 
-    </form>
+        <a
+            href="/spk"
+            class="btn btn-secondary">
+
+            Kembali
+
+        </a>
+
+    </div>
+
+</form>
 
 </div>
 
@@ -283,37 +318,78 @@ function tambahDetail()
 {
     let html = `
 
-    <div class="detail-item border p-3 mb-2">
+    <div class="detail-item border rounded p-3 mb-3">
 
-        <input type="text"
-               name="nama_file[]"
-               class="form-control mb-2"
-               placeholder="Nama File">
+        <div class="row">
 
-        <input type="text"
-               name="bahan[]"
-               class="form-control mb-2"
-               placeholder="Bahan">
+            <div class="col-md-3">
+                <label class="form-label">Nama File</label>
+                <input
+                    type="text"
+                    name="nama_file[]"
+                    class="form-control">
+            </div>
 
-        <input type="number"
-               name="panjang[]"
-               class="form-control mb-2"
-               placeholder="Panjang">
+            <div class="col-md-3">
+                <label class="form-label">Bahan</label>
+                <input
+                    type="text"
+                    name="bahan[]"
+                    class="form-control">
+            </div>
 
-        <input type="number"
-               name="lebar[]"
-               class="form-control mb-2"
-               placeholder="Lebar">
+            <div class="col-md-2">
+                <label class="form-label">Finishing</label>
+                <input
+                    type="text"
+                    name="finishing[]"
+                    class="form-control">
+            </div>
 
-        <input type="number"
-               name="qty[]"
-               class="form-control mb-2"
-               placeholder="Qty">
+            <div class="col-md-1">
+                <label class="form-label">Panjang</label>
+                <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    name="panjang[]"
+                    class="form-control">
+            </div>
 
-        <input type="text"
-               name="finishing[]"
-               class="form-control mb-2"
-               placeholder="Finishing">
+            <div class="col-md-1">
+                <label class="form-label">Lebar</label>
+                <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    name="lebar[]"
+                    class="form-control">
+            </div>
+
+            <div class="col-md-1">
+                <label class="form-label">Qty</label>
+                <input
+                    type="number"
+                    name="qty[]"
+                    min="1"
+                    value="1"
+                    class="form-control">
+            </div>
+
+        </div>
+    
+    </div>
+    
+    </div>
+
+        <button
+            type="button"
+            class="btn btn-danger btn-sm mt-2"
+            onclick="this.parentElement.remove()">
+
+            Hapus Item
+
+        </button>
 
     </div>
 
@@ -330,4 +406,3 @@ function tambahDetail()
 </script>
 
 @endsection
-

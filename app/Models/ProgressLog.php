@@ -3,49 +3,53 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
 
 class ProgressLog extends Model
 {
+    /**
+     * Table
+     */
+    protected $table = 'progress_logs';
+
+    /**
+     * Karena migration hanya punya created_at
+     */
     public $timestamps = false;
 
+    /**
+     * Mass Assignment
+     */
     protected $fillable = [
+
         'spk_id',
+
         'user_id',
+
         'old_status',
+
         'new_status',
+
         'catatan'
+
     ];
 
+    /**
+     * Relasi ke SPK
+     */
     public function spk()
     {
-        return $this->belongsTo(Spk::class);
+        return $this->belongsTo(
+            Spk::class
+        );
     }
 
+    /**
+     * Relasi ke User
+     */
     public function user()
     {
-        return $this->belongsTo(User::class);
-    }
-
-    public function updateStatus(Request $request, $id)
-    {
-        $spk = Spk::findOrFail($id);
-
-        $oldStatus = $spk->status;
-
-        $spk->update([
-            'status' => $request->status
-        ]);
-
-        ProgressLog::create([
-            'spk_id' => $spk->id,
-            'user_id' => auth()->id(),
-            'old_status' => $oldStatus,
-            'new_status' => $request->status,
-            'catatan' => $request->catatan
-        ]);
-
-        return back()
-            ->with('success', 'Status berhasil diupdate');
+        return $this->belongsTo(
+            User::class
+        );
     }
 }

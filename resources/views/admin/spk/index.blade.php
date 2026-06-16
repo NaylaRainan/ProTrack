@@ -1,289 +1,485 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('content')
 
-<div class="container">
+<div class="container-fluid">
 
-    <h2>Data SPK</h2>
+    <div class="d-flex justify-content-between align-items-center mb-4">
 
-    <a
-        href="/spk/create"
-        class="btn btn-primary mb-3"
-    >
-        Tambah SPK
-    </a>
+        <h2 class="fw-bold">
+            Data SPK
+        </h2>
 
-    <a
-        href="{{ route('spk.export', request()->query()) }}"
-        class="btn btn-success mb-3"
-    >
-        Export Excel
-    </a>
+        <div>
 
-    <hr>
+            <a href="/spk/create" class="btn btn-primary">
+                + Tambah SPK
+            </a>
 
-    <form method="GET">
+            <a href="/spk/export" class="btn btn-pink">
+                Export Excel
+            </a>
 
-        <div class="row mb-3">
+        </div>
 
-            <div class="col-md-3">
+    </div>
 
-                <input
-                    type="text"
-                    name="keyword"
-                    class="form-control"
-                    placeholder="Cari No SPK"
-                    value="{{ request('keyword') }}"
-                >
+    <div class="card shadow-sm border-0 mb-3">
+        <div class="card-body">
 
-            </div>
+            <form method="GET"
+                action="{{ url('/spk') }}" class="mb-3">
 
-            <div class="col-md-3">
+                <div class="input-group">
 
-                <select
-                    name="customer"
-                    class="form-control"
-                >
+                    <span class="input-group-text">
+                        🔍
+                    </span>
 
-                    <option value="">
-                        Semua Customer
-                    </option>
+                    <input
+                        type="text"
+                        id="searchInput"
+                        name="search"
+                        class="form-control"
+                        placeholder="Cari No SPK, Customer, Status, Priority..."
+                        value="{{ request('search') }}"
+                    >
 
-                    @foreach($customers as $customer)
+                    <button
+                        class="btn btn-primary d-none"
+                        type="submit">
 
-                        <option
-                            value="{{ $customer->id }}"
-                            {{ request('customer') == $customer->id ? 'selected' : '' }}
-                        >
-                            {{ $customer->nama_customer }}
-                        </option>
+                        Cari
 
-                    @endforeach
+                    </button>
 
-                </select>
+                </div>
 
-            </div>
+            </form>
 
-            <div class="col-md-3">
+        </div>
+    </div>
 
-                <select
-                    name="department"
-                    class="form-control"
-                >
+    <div id="spk-table">
 
-                    <option value="">
-                        Semua Departemen
-                    </option>
+        <div class="card card-modern">
 
-                    <option value="1">Develop</option>
-                    <option value="2">Offset</option>
-                    <option value="3">Plotter</option>
-                    <option value="4">UV</option>
-                    <option value="5">Finishing</option>
+            <div class="card-body">
 
-                </select>
+                <table class="table table-hover align-middle">
 
-            </div>
+                    <thead>
 
-            <div class="col-md-3">
+                        <tr>
 
-                <select
-                    name="status"
-                    class="form-control"
-                >
+                            <th>
+                                <a href="?{{ http_build_query(array_merge(request()->all(), [
+                                    'sort' => 'no_spk',
+                                    'direction' => request('direction') == 'asc' ? 'desc' : 'asc'
+                                ])) }}">
+                                    No SPK
+                                </a>
+                            </th>
 
-                    <option value="">
-                        Semua Status
-                    </option>
+                            <th>
+                                <a href="?{{ http_build_query(array_merge(request()->all(), [
+                                    'sort' => 'customer',
+                                    'direction' => request('direction') == 'asc' ? 'desc' : 'asc'
+                                ])) }}">
+                                    Customer
+                                </a>
+                            </th>
 
-                    <option value="belum_diproses">
-                        Belum Diproses
-                    </option>
+                            <th>
+                                <a href="?{{ http_build_query(array_merge(request()->all(), [
+                                    'sort' => 'department',
+                                    'direction' => request('direction') == 'asc' ? 'desc' : 'asc'
+                                ])) }}">
+                                    Department
+                                </a>
+                            </th>
 
-                    <option value="sedang_diproses">
-                        Sedang Diproses
-                    </option>
+                            <th>
+                                <a href="?{{ http_build_query(array_merge(request()->all(), [
+                                    'sort' => 'priority',
+                                    'direction' => request('direction') == 'asc' ? 'desc' : 'asc'
+                                ])) }}">
+                                    Priority
+                                </a>
+                            </th>
 
-                    <option value="menunggu_finishing">
-                        Menunggu Finishing
-                    </option>
+                            <th>
+                                <a href="?{{ http_build_query(array_merge(request()->all(), [
+                                    'sort' => 'status',
+                                    'direction' => request('direction') == 'asc' ? 'desc' : 'asc'
+                                ])) }}">
+                                    Status
+                                </a>
+                            </th>
 
-                    <option value="sedang_finishing">
-                        Sedang Finishing
-                    </option>
+                            <th>
+                                Progress
+                            </th>
 
-                    <option value="selesai">
-                        Selesai
-                    </option>
+                            <th>
+                                <a href="?{{ http_build_query(array_merge(request()->all(), [
+                                    'sort' => 'deadline_date',
+                                    'direction' => request('direction') == 'asc' ? 'desc' : 'asc'
+                                ])) }}">
+                                    Deadline
+                                </a>
+                            </th>
 
-                    <option value="terlambat">
-                        Terlambat
-                    </option>
+                            <th width="200">
+                                Aksi
+                            </th>
 
-                </select>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                    @forelse($spks as $spk)
+
+                        <tr>
+
+                            <td>
+
+                                <strong>
+
+                                    {{ $spk->no_spk }}
+
+                                </strong>
+
+                            </td>
+
+                            <td>
+
+                                {{ $spk->customer->nama_customer }}
+
+                            </td>
+
+                            <td>
+
+                                {{ $spk->department->nama_bagian }}
+
+                            </td>
+
+                            <td>
+
+                                @if($spk->priority=='urgent')
+
+                                    <span class="badge bg-danger">
+                                        URGENT
+                                    </span>
+
+                                @elseif($spk->priority=='high')
+
+                                    <span class="badge bg-warning text-dark">
+                                        HIGH
+                                    </span>
+
+                                @else
+
+                                    <span class="badge bg-secondary">
+                                        NORMAL
+                                    </span>
+
+                                @endif
+
+                            </td>
+
+                            <td>
+
+                                @if(
+                                    $spk->deadline_date &&
+                                    $spk->deadline_date < date('Y-m-d') &&
+                                    $spk->status != 'selesai'
+                                )
+
+                                    <span class="badge bg-danger">
+                                        Terlambat
+                                    </span>
+
+                                @elseif($spk->status=='selesai')
+
+                                    <span class="badge bg-success">
+                                        Selesai
+                                    </span>
+
+                                @else
+
+                                    <span class="badge bg-info text-dark">
+                                        {{ str_replace('_',' ',$spk->status) }}
+                                    </span>
+
+                                @endif
+
+                            </td>
+
+                            <td>
+
+                            @php
+
+                                $progress = 0;
+
+                                if($spk->status == 'belum_diproses')
+                                {
+                                    $progress = 0;
+                                }
+                                elseif($spk->status == 'sedang_diproses')
+                                {
+                                    $progress = 50;
+                                }
+                                elseif($spk->status == 'menunggu_finishing')
+                                {
+                                    $progress = 75;
+                                }
+                                elseif($spk->status == 'sedang_finishing')
+                                {
+                                    $progress = 90;
+                                }
+                                elseif($spk->status == 'selesai')
+                                {
+                                    $progress = 100;
+                                }
+                                elseif($spk->status == 'terlambat')
+                                {
+                                    $progress = 50;
+                                }
+
+                            @endphp
+
+                            <div class="progress" style="height:20px;">
+
+                                <div
+                                    class="progress-bar"
+                                    style="
+                                        width: {{ $progress }}%;
+                                        background: linear-gradient(
+                                            90deg,
+                                            #8EC5FC,
+                                            #F8BBD9
+                                        );
+                                    ">
+
+                                    {{ $progress }}%
+
+                                </div>
+
+                            </div>
+
+                        </td>
+
+                            <td>
+
+                            @php
+
+                            $deadline =
+                            \Carbon\Carbon::parse(
+                                $spk->deadline_date
+                            );
+
+                            $hari =
+                            now()->diffInDays(
+                                $deadline,
+                                false
+                            );
+
+                            @endphp
+
+                            @if($hari <= 1)
+
+                            <span class="deadline-warning">
+
+                                {{ $spk->deadline_date }}
+
+                                <br>
+
+                                <small>
+                                    Deadline Dekat
+                                </small>
+
+                            </span>
+
+                            @else
+
+                            {{ $spk->deadline_date }}
+
+                            @endif
+
+                            </td>
+
+                            <td>
+
+                                <a
+                                    href="/spk/{{ $spk->id }}?{{ http_build_query(request()->query()) }}"
+                                    class="btn btn-sm btn-primary">
+
+                                    Detail
+
+                                </a>
+
+                                <a
+                                    href="/spk/{{ $spk->id }}/edit?{{ http_build_query(request()->query()) }}"
+                                    class="btn btn-sm btn-pink">
+
+                                    Edit
+
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                    @empty
+
+                        <tr>
+
+                            <td
+                                colspan="8"
+                                class="text-center">
+
+                                Tidak ada data SPK
+
+                            </td>
+
+                        </tr>
+
+                    @endforelse
+
+                    </tbody>
+
+                </table>
+
+                <div class="mt-3">
+
+                    {{ $spks->links() }}
+
+                </div>
 
             </div>
 
         </div>
 
-        <div class="row mb-3">
-
-            <div class="col-md-3">
-
-                <select
-                    name="priority"
-                    class="form-control"
-                >
-
-                    <option value="">
-                        Semua Priority
-                    </option>
-
-                    <option value="normal">
-                        Normal
-                    </option>
-
-                    <option value="high">
-                        High
-                    </option>
-
-                    <option value="urgent">
-                        Urgent
-                    </option>
-
-                </select>
-
-            </div>
-
-            <div class="col-md-2">
-
-                <label>
-                    Tanggal SPK
-                </label>
-
-                <input
-                    type="date"
-                    name="tanggal_awal"
-                    class="form-control"
-                    value="{{ request('tanggal_awal') }}"
-                >
-
-            </div>
-
-            <div class="col-md-2">
-
-                <label>
-                    Tanggal Deadline
-                </label>
-
-                <input
-                    type="date"
-                    name="deadline_awal"
-                    class="form-control"
-                    value="{{ request('deadline_awal') }}"
-                >
-
-            </div>
-
-            <div class="col-md-1">
-
-                <button
-                    type="submit"
-                    class="btn btn-primary"
-                >
-                    Cari
-                </button>
-
-            </div>
-
-        </div>
-
-    </form>
-
-    <hr>
-
-    <table class="table table-bordered">
-
-        <thead>
-            <tr>
-                <th>No SPK</th>
-                <th>Customer</th>
-                <th>Departemen</th>
-                <th>Status</th>
-                <th>Priority</th>
-                <th>Deadline</th>
-                <th>Aksi</th>
-            </tr>
-        </thead>
-
-        <tbody>
-
-        @forelse($spks as $spk)
-
-            <tr>
-
-                <td>{{ $spk->no_spk }}</td>
-
-                <td>{{ $spk->customer->nama_customer }}</td>
-
-                <td>{{ $spk->department->nama_bagian }}</td>
-
-                <td>{{ $spk->status }}</td>
-
-                <td>{{ $spk->priority }}</td>
-
-                <td>{{ $spk->deadline_date }}</td>
-
-                <td>
-
-                    <a
-                        href="/spk/{{ $spk->id }}"
-                        class="btn btn-info btn-sm"
-                    >
-                        Detail
-                    </a>
-
-                    <a
-                        href="/spk/{{ $spk->id }}/edit"
-                        class="btn btn-warning btn-sm"
-                    >
-                        Edit
-                    </a>
-
-                </td>
-
-                <tr
-                @if(
-                    $spk->deadline_date &&
-                    $spk->deadline_date < now()->toDateString() &&
-                    $spk->status != 'selesai'
-                )
-                style="background:#ffe5e5;"
-                @endif
-                >
-
-            </tr>
-
-        @empty
-
-            <tr>
-
-                <td colspan="7" class="text-center">
-                    Tidak ada data SPK
-                </td>
-
-            </tr>
-
-        @endforelse
-
-        </tbody>
-
-    </table>
-
-    <div class="mt-3">
-        {{ $spks->links() }}
     </div>
 
 </div>
 
 @endsection
+
+@push('scripts')
+<script>
+
+document.addEventListener('DOMContentLoaded', function () {
+
+    const searchInput =
+        document.getElementById('searchInput');
+
+    function reloadTable() {
+
+        fetch(window.location.href)
+            .then(response => response.text())
+            .then(html => {
+
+                const parser =
+                    new DOMParser();
+
+                const doc =
+                    parser.parseFromString(
+                        html,
+                        'text/html'
+                    );
+
+                const newTable =
+                    doc.getElementById(
+                        'spk-table'
+                    );
+
+                const currentTable =
+                    document.getElementById(
+                        'spk-table'
+                    );
+
+                if (
+                    newTable &&
+                    currentTable
+                ) {
+                    currentTable.innerHTML =
+                        newTable.innerHTML;
+                }
+
+            });
+    }
+
+    // AUTO REFRESH
+    setInterval(() => {
+        reloadTable();
+    }, 5000);
+
+    // LIVE SEARCH
+    let typingTimer;
+
+    searchInput.addEventListener(
+        'keyup',
+        function () {
+
+            clearTimeout(typingTimer);
+
+            typingTimer =
+                setTimeout(() => {
+
+                const url =
+                    new URL(
+                        window.location.href
+                    );
+
+                url.searchParams.set(
+                    'search',
+                    searchInput.value
+                );
+
+                history.pushState(
+                    {},
+                    '',
+                    url
+                );
+
+                fetch(url)
+                    .then(response =>
+                        response.text()
+                    )
+                    .then(html => {
+
+                        const parser =
+                            new DOMParser();
+
+                        const doc =
+                            parser.parseFromString(
+                                html,
+                                'text/html'
+                            );
+
+                        const newTable =
+                            doc.getElementById(
+                                'spk-table'
+                            );
+
+                        document
+                            .getElementById(
+                                'spk-table'
+                            )
+                            .innerHTML =
+                            newTable.innerHTML;
+
+                    });
+
+            }, 500);
+
+        });
+
+});
+
+</script>
+@endpush

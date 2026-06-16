@@ -2,15 +2,21 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Notification extends Model
 {
-    use HasFactory;
+    protected $fillable = [
+        'spk_id',
+        'title',
+        'message',
+        'is_read'
+    ];
 
-    public function user()
+    public function spk()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(
+            Spk::class
+        );
     }
 }

@@ -9,7 +9,6 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // Update otomatis SPK terlambat
         Spk::whereDate(
                 'deadline_date',
                 '<',
@@ -106,77 +105,88 @@ class DashboardController extends Controller
         )
         ->get();
 
-        $urgent = Spk::where('priority', 'urgent')->count();
+        $urgent = Spk::where(
+            'priority',
+            'urgent'
+        )->count();
 
-        $high = Spk::where('priority', 'high')->count();
+        $high = Spk::where(
+            'priority',
+            'high'
+        )->count();
 
-        $normal = Spk::where('priority', 'normal')->count();
+        $normal = Spk::where(
+            'priority',
+            'normal'
+        )->count();
 
         $urgentSpks = Spk::with([
                 'customer',
                 'department'
             ])
-            ->where('priority', 'urgent')
-            ->where('status', '!=', 'selesai')
+            ->where(
+                'priority',
+                'urgent'
+            )
+            ->where(
+                'status',
+                '!=',
+                'selesai'
+            )
             ->latest()
             ->take(5)
             ->get();
 
         $statusChart = [
+            $belumDiproses,
+            $sedangDiproses,
+            $menungguFinishing,
+            $sedangFinishing,
+            $selesai,
+            $terlambat
+        ];
 
-        $belumDiproses,
+        $departmentChart = [
+            $develop,
+            $offset,
+            $plotter,
+            $uv,
+            $finishing
+        ];
 
-        $sedangDiproses,
-
-        $menungguFinishing,
-
-        $sedangFinishing,
-
-        $selesai,
-
-        $terlambat
-
-    ];
-
-    $departmentChart = [
-
-        $develop,
-
-        $offset,
-
-        $plotter,
-
-        $uv,
-
-        $finishing
-
-    ]; 
-
-    $terlambatUrgent = Spk::where(
-        'status',
-        'terlambat'
-    )
-    ->where(
-        'priority',
-        'urgent'
-    )
-    ->count();
-            
-    $deadlineBesok = Spk::whereDate(
-            'deadline_date',
-            now()->addDay()->toDateString()
+        $terlambatUrgent = Spk::where(
+            'status',
+            'terlambat'
         )
-        ->where('status', '!=', 'selesai')
+        ->where(
+            'priority',
+            'urgent'
+        )
         ->count();
 
-    $spkTerlambat = Spk::whereDate(
-            'deadline_date',
-            '<',
-            now()->toDateString()
-        )
-        ->where('status', '!=', 'selesai')
-        ->count();
-            
+        $deadlineBesok = Spk::whereDate(
+                'deadline_date',
+                now()->addDay()->toDateString()
+            )
+            ->where(
+                'status',
+                '!=',
+                'selesai'
+            )
+            ->count();
+
+        $spkTerlambat = Spk::whereDate(
+                'deadline_date',
+                '<',
+                now()->toDateString()
+            )
+            ->where(
+                'status',
+                '!=',
+                'selesai'
+            )
+            ->count();
+
         return view(
             'admin.dashboard',
             compact(
